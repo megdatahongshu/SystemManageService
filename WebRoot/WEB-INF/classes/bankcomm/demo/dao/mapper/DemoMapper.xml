@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- spring集成Mybatis namespace 必须是接口的全类名  -->
+<mapper namespace="bankcomm.demo.dao.mapper.DemoMapper">
+  
+   <resultMap id="BaseResultMap" type="bankcomm.demo.dao.Do.DemoBeen">
+    <result column="USER_LOGIN_NAME" property="USER_LOGIN_NAME" jdbcType="VARCHAR" />
+    <result column="USER_NAME_EN" property="USER_NAME_EN" jdbcType="VARCHAR"/>
+  </resultMap>
+  
+  <select id="query" resultMap="BaseResultMap"> 
+  	select 
+		User_Id,User_Name_Cn from H00_AP_USER_INFO_REF
+  </select>
+
+</mapper>

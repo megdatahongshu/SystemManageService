@@ -1,0 +1,24 @@
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+						http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+						http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+						http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+	<!-- spring注册mybatis映射 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">  
+		<property name="basePackage" value="bankcomm.test.dao.mapper;bankcomm.demo.dao.mapper;bankcomm.system.role.dao.mapper" /> 
+		<property name="sqlSessionFactory" ref="sqlSessionFactoryBean" /> 
+	</bean> 
+	
+<!-- 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">   -->
+<!-- 		<property name="basePackage" value="bankcomm.test.dao.mapper" />  -->
+<!-- 		<property name="sqlSessionFactory" ref="sqlSessionFactoryBean" />  -->
+<!-- 	</bean>  -->
+
+</beans>

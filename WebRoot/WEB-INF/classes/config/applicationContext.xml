@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+						http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+						http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd"
+	default-autowire="byType">
+<!-- 	<context:component-scan base-package="bankcomm"> -->
+<!-- 		 <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />  -->
+<!--  		 <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service" />  -->
+<!-- 	</context:component-scan> -->
+	
+	<import resource="classpath*:/config/sqlmap/sqlmapper.xml"/>
+	<!-- ============================== 数据库配置 ==================================== -->
+	<!-- 数据源配置 -->
+<!-- 	<bean id="config" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"> -->
+<!-- 		<property name="locations"> -->
+<!-- 			<list> -->
+<!-- 				 <value>classpath:/config/db-config.properties</value> -->
+<!-- 			</list> -->
+<!-- 		</property> -->
+<!-- 		<property name="ignoreUnresolvablePlaceholders" value="true" /> -->
+<!-- 	</bean> -->
+<!-- 	<context:property-placeholder location="classpath:/config/db-config.properties"/> -->
+	<bean name="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName">
+			<value>com.mysql.jdbc.Driver</value>
+		</property> 
+		<property name="url">
+			<value>jdbc:mysql://192.168.3.19:3306/hy_policy_manage_db?useUnicode=true&amp;characterEncoding=UTF-8</value>
+		</property>
+		<property name="username">
+			<value>root</value>
+		</property>
+		<property name="password">
+			<value>root</value>
+		</property>
+	</bean>
+        
+	<!-- ================================ MyBatis SqlSession配置 ========================================= -->
+	<!-- 使用SqlSessionFactoryBean工厂产生SqlSession对象，方便后期注入Dao -->
+	<bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+<!-- 		<property name="configLocation" value="classpath:Configuration.xml"></property> -->
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<!-- ================================= 事务控制相关 ============================================= -->
+   	<bean name="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">   
+    	<property name="dataSource" ref="dataSource"></property>
+ 	</bean>   
+ 	
+ 	
+<!-- 	 <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  -->
+<!-- 	 	<property name="dataSource" ref="dataSource" />  -->
+<!-- 	 </bean>  -->
+<!-- 	 spring declarative transaction management  -->
+<!-- 	 <aop:config>  -->
+<!-- 		 <aop:pointcut id="fooServiceMethods"  -->
+<!-- 		 expression="execution(* bankcomm.*.service.impl.*.*(..))"/>  事物处理配置路径 -->
+<!-- 		 <aop:advisor advice-ref="txAdvice" pointcut-ref="fooServiceMethods"/>   -->
+<!-- 	 </aop:config>  -->
+<!-- 	 <tx:advice id="txAdvice" transaction-manager="txManager">  -->
+<!-- 		 <tx:attributes>  -->
+<!-- 			 <tx:method name="find*" read-only="true"/>  -->
+<!-- 			 <tx:method name="load*" read-only="true"/>  -->
+<!-- 			 <tx:method name="*" rollback-for="Exception"/>  -->
+<!-- 		 </tx:attributes> -->
+<!-- 	</tx:advice>  -->
+	
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="delete*" propagation="REQUIRED" read-only="false" 
+			           rollback-for="java.lang.Exception" no-rollback-for="java.lang.RuntimeException"/>
+			<tx:method name="insert*" propagation="REQUIRED" read-only="false" 
+			           rollback-for="java.lang.RuntimeException" />
+			<tx:method name="update*" propagation="REQUIRED" read-only="false" 
+			           rollback-for="java.lang.Exception" />
+			
+			<tx:method name="find*" propagation="SUPPORTS"/>
+			<tx:method name="get*" propagation="SUPPORTS"/>
+			<tx:method name="select*" propagation="SUPPORTS"/>
+		</tx:attributes>
+	</tx:advice>
+	
+	<aop:config>
+		<aop:pointcut id="pc" expression="execution(* bankcomm.*.service.impl.*.*(..))" />
+		<aop:advisor pointcut-ref="pc" advice-ref="txAdvice" />
+	</aop:config>
+	
+</beans>
